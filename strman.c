@@ -1,23 +1,23 @@
 #include "shell.h"
 
 /**
- * _strcpy - function that copes a string
- * @dest: to the destination
- * @src: from the source
+ * _strcpy - function that copies string pointed to by src
+ * @dest: destination to copy from
+ * @src: where to copy to
  *
- * Return: pointer to the destination
+ * Return: string value
  */
 char *_strcpy(char *dest, char *src)
 {
-	int j;
+	int j = 0, k = 0;
 
-	if (dest == src || src == 0)
-		return (dest);
-	for (j = 0; src[j]; j++)
+	while (*(src + j ) != '\0')
+		j++;
+	for (k = 0; k < j; k++)
 	{
-		dest[j] = src[j];
+		dest[k] = src[k];
 	}
-	dest[j] = 0;
+	dest[j] = '\0';
 	return (dest);
 }
 

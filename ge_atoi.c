@@ -1,10 +1,46 @@
 #include "shell.h"
 
 /**
- * interactive - returns true if shell is interactive mode
- * @info: struct address
+* _atoi - function that convert a string to an integer
+* @s: string to be converted
+* Return: integer value of the converted string
+*/
+int _atoi(char *s)
+{
+	int i = 0, j = 0, k = 0, l = 0, dlent, intval;
+
+	dlent = 0;
+	intval  = 0;
+
+	while (s[dlent] != '\0')
+		dlent++;
+	while (i < dlent && j == 0)
+	{
+		if (s[i] == '-')
+			++l;
+		if (s[i] >= '0' && s[i] <= '9')
+		{
+			intval = s[i] - '0';
+			if (l % 2)
+				intval = -intval;
+			k = k * 10 + intval;
+			j = 1;
+			if (s[i + 1] < '0' || s[i + 1] > '9')
+				break;
+			j = 0;
+		}
+		i++;
+	}
+	if (j == 0)
+		return (0);
+	return (k);
+}
+
+/**
+ * interactive - function that check if shell is in interactive mode
+ * @info: parameter address
  *
- * Return: 1 if  interactive mode, 0 otherwise
+ * Return: 1 if  interactive mode, else 0
  */
 int interactive(info_t *info)
 {
@@ -12,8 +48,26 @@ int interactive(info_t *info)
 }
 
 /**
- * is_delim - checks if character is a delimeter
- * @c: the char to check
+ * _isalpha - function that checks for alphabetic character
+ *
+ * @c: character to check
+ *
+ * Return: Always 1 on succes 0 otherwise
+ */
+
+int _isalpha(int c)
+{
+	if ((c >= 65 && c <= 97) || (c >= 97 && c <= 122))
+	{
+		return (1);
+	}
+
+	return (0);
+}
+
+/**
+ * is_delim - function that check if character is a delimeter
+ * @c: char to check
  * @delim: the delimeter string
  * Return: 1 if true, 0 if false
  */
@@ -23,53 +77,5 @@ int is_delim(char c, char *delim)
 		if (*delim++ == c)
 			return (1);
 	return (0);
-}
-
-/**
- * _isalpha - checks for alphabetic character
- * @c: The character to input
- * Return: 1 if c is alphabetic, 0 otherwise
- */
-
-int _isalpha(int c)
-{
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-		return (1);
-	else
-		return (0);
-}
-
-/**
- * _atoi - converts a string to an integer
- * @s: the string to be converted
- * Return: 0 if no numbers in string, converted number otherwise
- */
-
-int _atoi(char *s)
-{
-	int i, sign = 1, flag = 0, output;
-	unsigned int result = 0;
-
-	for (i = 0;  s[i] != '\0' && flag != 2; i++)
-	{
-		if (s[i] == '-')
-			sign *= -1;
-
-		if (s[i] >= '0' && s[i] <= '9')
-		{
-			flag = 1;
-			result *= 10;
-			result += (s[i] - '0');
-		}
-		else if (flag == 1)
-			flag = 2;
-	}
-
-	if (sign == -1)
-		output = -result;
-	else
-		output = result;
-
-	return (output);
 }
 

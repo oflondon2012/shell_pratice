@@ -75,23 +75,21 @@ list_t *add_node_end(list_t **head, const char *str, int num)
 }
 
 /**
- * print_list_str - prints only the str element of a list_t linked list
+ * print_linklist - function that print the link list
  * @h: pointer to first node
  *
  * Return: size of list
  */
-size_t print_list_str(const list_t *h)
+size_t print_linklist(const list_t *fnode)
 {
-	size_t i = 0;
+	size_t j;
 
-	while (h)
+	for (j = 0; fnode != NULL; fnode = fnode->next, j++)
 	{
-		_myputs(h->str ? h->str : "(nil)");
+		_myputs(fnode->str ? fnode->str : "(nil)");
 		_myputs("\n");
-		h = h->next;
-		i++;
 	}
-	return (i);
+	return (j);
 }
 
 /**
@@ -135,19 +133,19 @@ int delete_node_at_index(list_t **head, unsigned int index)
 }
 
 /**
- * free_list - frees all nodes of a list
- * @head_ptr: address of pointer to head node
+ * free_gelist - function that frees all nodes of a list
+ * @head_ptr: address of pointer
  *
  * Return: void
  */
-void free_list(list_t **head_ptr)
+void free_gelist(list_t **headpts)
 {
-	list_t *node, *next_node, *head;
+	list_t *node, *next_node, *head_ptr;
 
-	if (!head_ptr || !*head_ptr)
+	if (!headpts || !*headpts)
 		return;
-	head = *head_ptr;
-	node = head;
+	head_ptr = *headpts;
+	node = head_ptr;
 	while (node)
 	{
 		next_node = node->next;
@@ -155,6 +153,6 @@ void free_list(list_t **head_ptr)
 		free(node);
 		node = next_node;
 	}
-	*head_ptr = NULL;
+	*headpts = NULL;
 }
 

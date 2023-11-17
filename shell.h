@@ -14,6 +14,7 @@
 #include <errno.h>
 
 /* read and write handler */
+#define MAX_LENGTH 1024
 #define READ_BUF_SIZE 1024
 #define WRITE_BUF_SIZE 1024
 #define BUF_FLUSH -1
@@ -52,8 +53,7 @@ typedef struct liststr
 } list_t;
 
 /**
- * struct passinfo - contains pseudo-arguements to pass into a function,
- * allowing uniform prototype for function pointer struct
+ * struct passinfo - prototype for function pointer struct
  * @arg: a string generated from getline containing arguements
  * @argv: an array of strings generated from arg
  * @path: a string path for the current command
@@ -69,7 +69,7 @@ typedef struct liststr
  * @env_changed: on if environ was changed
  * @status: the return status of the last exec'd command
  * @cmd_buf: address of pointer to cmd_buf, on if chaining
- * @cmd_buf_type: CMD_type ||, &&, ;
+ * @cmd_buffer_type: CMD_type ||, &&, ;
  * @readfd: the fd from which to read line input
  * @histcount: the history line number count
  */
@@ -112,27 +112,27 @@ typedef struct builtin
 } builtin_table;
 
 
-/* toem_shloop.c */
+/* shell main code`::q */
 int hsh(info_t *, char **);
 int find_builtin(info_t *);
 void find_cmd(info_t *);
 void fork_cmd(info_t *);
 
-/* toem_parser.c */
-int is_cmd(info_t *, char *);
+/* handle the parser*/
+int ge_cmd(info_t *, char *);
 char *dup_chars(char *, int, int);
-char *find_path(info_t *, char *, char *);
+char *ge_getpath(info_t *, char *, char *);
 
 /* loophsh.c */
 int loophsh(char **);
 
-/* toem_errors.c */
+/* error handler.c */
 void _eputs(char *);
 int _eputchar(char);
 int _putfd(char c, int fd);
 int _putsfd(char *str, int fd);
 
-/* toem_string.c */
+/* _string.c */
 int _strlen(char *);
 int _strcmp(char *, char *);
 char *starts_with(const char *, const char *);
@@ -144,24 +144,24 @@ char *_strdup(const char *);
 void _myputs(char *);
 int _myputchar(char);
 
-/* toem_exits.c */
+/* exits function */
 char *_strncpy(char *, char *, int);
 char *_strncat(char *, char *, int);
 char *_strchr(char *, char);
 
-/* toem_tokenizer.c */
+/* tokenizer handler */
 char **strtow(char *, char *);
 char **strtow2(char *, char);
 
-/* toem_realloc.c */
+/* memory realloc.c */
 char *_memset(char *, char, unsigned int);
 void ffree(char **);
 void *_realloc(void *, unsigned int, unsigned int);
 
-/* toem_memory.c */
+/* free_memory */
 int bfree(void **);
 
-/* toem_atoi.c */
+/* atoi handler */
 int interactive(info_t *);
 int is_delim(char, char *);
 int _isalpha(int);
@@ -179,49 +179,49 @@ int ge_myexit(info_t *);
 int ge_mycd(info_t *);
 int ge_myhelp(info_t *);
 
-/* toem_builtin1.c */
-int _myhistory(info_t *);
-int _myalias(info_t *);
+/* Dealing with history */
+int ge_history(info_t *);
+int ge_alias(info_t *);
 
-/*toem_getline.c */
+/*in getline function */
 ssize_t read_buf(info_t *info, char *buf, size_t *i);
 ssize_t get_input(info_t *);
 ssize_t input_buf(info_t *info, char **buf, size_t *len);
 int _mygetline(info_t *, char **, size_t *);
 void sigHandle(int);
 
-/* toem_getinfo.c */
-void clear_info(info_t *);
+/* Dealing with  */
+void initiate_info(info_t *);
 void set_info(info_t *, char **);
-void free_info(info_t *, int);
+void free_fields(info_t *, int);
 
-/* toem_environ.c */
-char *_getenv(info_t *, const char *);
-int _myenv(info_t *);
-int _mysetenv(info_t *);
-int _myunsetenv(info_t *);
-int populate_env_list(info_t *);
+/* continue environ*/
+char *ge_getenv(info_t *, const char *);
+int ge_environ(info_t *info);
+int ge_psetenv(info_t *info);
+int ge_punsetenv(info_t *info);
+int print_envlist(info_t *info);
 
-/* toem_getenv.c */
-char **get_environ(info_t *);
-int _unsetenv(info_t *, char *);
-int _setenv(info_t *, char *, char *);
+/* environment fintion */
+char **get_environ(info_t *info);
+int ge_unsetenv(info_t *info, char *);
+int ge_setenv(info_t *, char *, char *);
 
-/* toem_history.c */
+/* dealing with history*/
 char *get_history_file(info_t *info);
 int write_history(info_t *info);
 int read_history(info_t *info);
 int build_history_list(info_t *info, char *buf, int linecount);
 int renumber_history(info_t *info);
 
-/* toem_lists.c */
+/* listhandler continue */
 list_t *add_node(list_t **, const char *, int);
 list_t *add_node_end(list_t **, const char *, int);
-size_t print_list_str(const list_t *);
+size_t print_linklist(const list_t *);
 int delete_node_at_index(list_t **, unsigned int);
-void free_list(list_t **);
+void free_gelist(list_t **);
 
-/* toem_lists1.c */
+/* list handler conti*/
 size_t list_len(const list_t *);
 char **list_to_strings(list_t *);
 size_t print_lists(const list_t *);

@@ -1,11 +1,11 @@
 #include "shell.h"
 
 /**
- * hsh - main  shell loop
- * @info: the parameter & return info struct
- * @av: the argument vector from main()
+ * hsh - main shell function
+ * @info: struct parameter
+ * @av: argument vector
  *
- * Return: 0 on success, 1 on error, or error code
+ * Return: Always (0) on success, (1) on error, or error code
  */
 int hsh(info_t *info, char **av)
 {
@@ -14,7 +14,7 @@ int hsh(info_t *info, char **av)
 
 	while (r != -1 && builtin_ret != -2)
 	{
-		clear_info(info);
+		initiate_info(info);
 		if (interactive(info))
 			_myputs("$ ");
 		_eputchar(BUF_FLUSH);
@@ -28,10 +28,10 @@ int hsh(info_t *info, char **av)
 		}
 		else if (interactive(info))
 			_myputchar('\n');
-		free_info(info, 0);
+		free_fields(info, 0);
 	}
 	write_history(info);
-	free_info(info, 1);
+	free_fields(info, 1);
 	if (!interactive(info) && info->status)
 		exit(info->status);
 	if (builtin_ret == -2)
@@ -54,27 +54,31 @@ int hsh(info_t *info, char **av)
  */
 int find_builtin(info_t *info)
 {
-	int i, built_in_ret = -1;
+	int i = 0;
+	int builtin_ret = -1;
 	builtin_table builtintbl[] = {
 		{"exit", ge_myexit},
-		{"env", _myenv},
+		{"env", ge_environ},
 		{"help", ge_myhelp},
-		{"history", _myhistory},
-		{"setenv", _mysetenv},
-		{"unsetenv", _myunsetenv},
+		{"setenv", ge_psetenv},
+		{"unsetenv", ge_punsetenv},
+		{"history", ge_history},
 		{"cd", ge_mycd},
-		{"alias", _myalias},
+		{"alias", ge_alias},
 		{NULL, NULL}
 	};
 
-	for (i = 0; builtintbl[i].type; i++)
+	while (builtintbl[i].type != NULL)
+	{
 		if (_strcmp(info->argv[0], builtintbl[i].type) == 0)
 		{
 			info->line_count++;
-			built_in_ret = builtintbl[i].func(info);
+			builtin_ret = builtintbl[i].func(info);
 			break;
 		}
-	return (built_in_ret);
+		i++;
+	}
+	return (builtin_ret);
 }
 
 /**
@@ -100,7 +104,7 @@ void find_cmd(info_t *info)
 	if (!k)
 		return;
 
-	path = find_path(info, _getenv(info, "PATH="), info->argv[0]);
+	path = ge_getpath(info, ge_getenv(info, "PATH="), info->argv[0]);
 	if (path)
 	{
 		info->path = path;
@@ -108,8 +112,8 @@ void find_cmd(info_t *info)
 	}
 	else
 	{
-		if ((interactive(info) || _getenv(info, "PATH=")
-					|| info->argv[0][0] == '/') && is_cmd(info, info->argv[0]))
+		if ((interactive(info) || ge_getenv(info, "PATH=")
+					|| info->argv[0][0] == '/') && ge_cmd(info, info->argv[0]))
 			fork_cmd(info);
 		else if (*(info->arg) != '\n')
 		{
@@ -140,7 +144,7 @@ void fork_cmd(info_t *info)
 	{
 		if (execve(info->path, info->argv, get_environ(info)) == -1)
 		{
-			free_info(info, 1);
+			free_fields(info, 1);
 			if (errno == EACCES)
 				exit(126);
 			exit(1);

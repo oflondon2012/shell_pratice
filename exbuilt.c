@@ -1,12 +1,12 @@
 #include "shell.h"
 
 /**
- * _myhistory - Function that displays the history list
+ * ge_history - Function that displays the history list
  *
  * @info: parameter
  * Return: Always (0)
  */
-int _myhistory(info_t *info)
+int ge_history(info_t *info)
 {
 	print_lists(info->history);
 	return (0);
@@ -21,18 +21,18 @@ int _myhistory(info_t *info)
  */
 int unset_alias(info_t *info, char *strg)
 {
-	char *p, c;
-	int ret;
+	char *position, save_car;
+	int delalias;
 
-	p = _strchr(strg, '=');
-	if (!p)
+	position = _strchr(strg, '=');
+	if (!position)
 		return (1);
-	c = *p;
-	*p = 0;
-	ret = delete_node_at_index(&(info->alias),
+	save_car = *position;
+	*position = '\0';
+	delalias = delete_node_at_index(&(info->alias),
 			get_node_index(info->alias, node_starts_with(info->alias, strg, -1)));
-	*p = c;
-	return (ret);
+	*position = save_car;
+	return (delalias);
 }
 
 /**
@@ -42,37 +42,37 @@ int unset_alias(info_t *info, char *strg)
  *
  * Return: Always 0 on success, 1 on error
  */
-int set_alias(info_t *info, char *str)
+int set_alias(info_t *info, char *strg)
 {
-	char *p;
+	char *position;
 
-	p = _strchr(str, '=');
-	if (!p)
+	position = _strchr(strg, '=');
+	if (!position)
 		return (1);
-	if (!*++p)
-		return (unset_alias(info, str));
+	if (!*++position)
+		return (unset_alias(info, strg));
 
-	unset_alias(info, str);
-	return (add_node_end(&(info->alias), str, 0) == NULL);
+	unset_alias(info, strg);
+	return (add_node_end(&(info->alias), strg, 0) == NULL);
 }
 
 /**
- * print_alias - prints an alias string
- * @node: the alias node
+ * print_alias - function that prints an alias string
+ * @node: alias node
  *
- * Return: Always 0 on success, 1 on error
+ * Return: Always (0) when successful,else 1
  */
 int print_alias(list_t *node)
 {
-	char *p = NULL, *a = NULL;
+	char *position = NULL, *alias = NULL;
 
 	if (node)
 	{
-		p = _strchr(node->str, '=');
-		for (a = node->str; a <= p; a++)
-			_myputchar(*a);
+		position = _strchr(node->str, '=');
+		for (alias = node->str; alias <= position; alias++)
+			_myputchar(*alias);
 		_myputchar('\'');
-		_myputs(p + 1);
+		_myputs(position + 1);
 		_myputs("'\n");
 		return (0);
 	}

@@ -43,24 +43,24 @@ int ge_mycd(info_t *info)
 		_myputs("TODO: >>getcwd failure emsg here<<\n");
 	if (!info->argv[1])
 	{
-		dir = _getenv(info, "HOME=");
+		dir = ge_getenv(info, "HOME=");
 		if (!dir)
 			chdir_ret = /* SHUT: just to shut this */
-				chdir((dir = _getenv(info, "PWD=")) ? dir : "/");
+				chdir((dir = ge_getenv(info, "PWD=")) ? dir : "/");
 		else
 			chdir_ret = chdir(dir);
 	}
 	else if (_strcmp(info->argv[1], "-") == 0)
 	{
-		if (!_getenv(info, "OLDPWD="))
+		if (!ge_getenv(info, "OLDPWD="))
 		{
 			_myputs(cu_dir);
 			_myputchar('\n');
 			return (1);
 		}
-		_myputs(_getenv(info, "OLDPWD=")), _myputchar('\n');
+		_myputs(ge_getenv(info, "OLDPWD=")), _myputchar('\n');
 		chdir_ret = /* SHUT: TO shut the code */
-			chdir((dir = _getenv(info, "OLDPWD=")) ? dir : "/");
+			chdir((dir = ge_getenv(info, "OLDPWD=")) ? dir : "/");
 	}
 	else
 		chdir_ret = chdir(info->argv[1]);
@@ -71,8 +71,8 @@ int ge_mycd(info_t *info)
 	}
 	else
 	{
-		_setenv(info, "OLDPWD", _getenv(info, "PWD="));
-		_setenv(info, "PWD", getcwd(buffer, 1024));
+		ge_setenv(info, "OLDPWD", ge_getenv(info, "PWD="));
+		ge_setenv(info, "PWD", getcwd(buffer, 1024));
 	}
 	return (0);
 }

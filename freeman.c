@@ -1,10 +1,10 @@
 #include "shell.h"
 
 /**
- * clear_info - initializes info_t struct
- * @info: struct adress
+ * initiate_info - function that initializes info_t struct
+ * @info: argument
  */
-void clear_info(info_t *info)
+void initiate_info(info_t *info)
 {
 	info->arg = NULL;
 	info->argv = NULL;
@@ -13,13 +13,13 @@ void clear_info(info_t *info)
 }
 
 /**
- * set_info - initializes info_t struct
- * @info: struct address
+ * set_info - function that set information
+ * @info: parameter address
  * @av: argument vector
  */
 void set_info(info_t *info, char **av)
 {
-	int i = 0;
+	int j = 0;
 
 	info->fname = av[0];
 	if (info->arg)
@@ -35,9 +35,9 @@ void set_info(info_t *info, char **av)
 				info->argv[1] = NULL;
 			}
 		}
-		for (i = 0; info->argv && info->argv[i]; i++)
+		for (j = 0; info->argv && info->argv[j]; j++)
 			;
-		info->argc = i;
+		info->argc = j;
 
 		alias_replace(info);
 		replace_vars(info);
@@ -45,11 +45,11 @@ void set_info(info_t *info, char **av)
 }
 
 /**
- * free_info - frees info_t struct fields
- * @info: struct address
- * @all: true if freeing all fields
+ * free_fields - function that frees the structure
+ * @info: parameter pointer address
+ * @all: to decode if the are all free
  */
-void free_info(info_t *info, int all)
+void free_fields(info_t *info, int all)
 {
 	ffree(info->argv);
 	info->argv = NULL;
@@ -59,11 +59,11 @@ void free_info(info_t *info, int all)
 		if (!info->cmd_buffer)
 			free(info->arg);
 		if (info->env)
-			free_list(&(info->env));
+			free_gelist(&(info->env));
 		if (info->history)
-			free_list(&(info->history));
+			free_gelist(&(info->history));
 		if (info->alias)
-			free_list(&(info->alias));
+			free_gelist(&(info->alias));
 		ffree(info->environ);
 		info->environ = NULL;
 		bfree((void **)info->cmd_buffer);

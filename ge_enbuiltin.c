@@ -1,86 +1,82 @@
 #include "shell.h"
-
 /**
- * _myenv - prints  the current environment
- * @info: Structure containing potential arguments. Used to maintain
- * constant function prototype.
- * Return: Always 0
+ *ge _environ - function that print current  environment
+ * @info: parameter struct
+ *
+ * Return: Always (0)
  */
-int _myenv(info_t *info)
+int ge_environ(info_t *info)
 {
-	print_list_str(info->env);
+	print_linklist(info->env);
 	return (0);
 }
 
 /**
- * _getenv - gets the value of an environ variable
- * @info: Structure containing potential arguments. Used to maintain
- * @name: env var name
+ * ge_getenv - function that get environment variable
+ * @info: struct parameter
+ * @name: environ varriable name
  *
- * Return: the value
+ * Return: environment variable
  */
-char *_getenv(info_t *info, const char *name)
+char *ge_getenv(info_t *info, const char *name)
 {
 	list_t *node = info->env;
-	char *p;
+	char *par = NULL;
 
-	while (node)
+	for (; node != NULL; node = node ->next)
 	{
-		p = starts_with(node->str, name);
-		if (p && *p)
-			return (p);
-		node = node->next;
+		par = starts_with(node->str, name);
+		if (par && *par)
+			return (par);
 	}
 	return (NULL);
 }
 
 /**
- * _mysetenv - Initialize a new environment variable,
- * or modify an existing one
- * @info: Structure containing potential arguments. Used to maintain
- * constant function prototype.
- * Return: Always 0
+ * ge_psetenv - function that initialize new environment variable
+ *
+ * @info: parameter struct
+ * Return: Always (0)
  */
-int _mysetenv(info_t *info)
+int ge_psetenv(info_t *info)
 {
 	if (info->argc != 3)
 	{
 		_eputs("Incorrect number of arguements\n");
 		return (1);
 	}
-	if (_setenv(info, info->argv[1], info->argv[2]))
-		return (0);
-	return (1);
+	if (!ge_setenv(info, info->argv[1], info->argv[2]))
+		return (1);
+	return (0);
 }
 
 /**
- * _myunsetenv - Remove an environment variable
- * @info: Structure containing potential arguments. Used to maintain
- * constant function prototype.
- * Return: Always 0
+ * ge_punsetenv - function that unset environment variable
+ * @info: parameter struct
+ * Return: Always (0)
  */
-int _myunsetenv(info_t *info)
+int ge_punsetenv(info_t *info)
 {
-	int i;
+	int k;
 
 	if (info->argc == 1)
 	{
 		_eputs("Too few arguements.\n");
 		return (1);
 	}
-	for (i = 1; i <= info->argc; i++)
-		_unsetenv(info, info->argv[i]);
+	for (k = 1; k <= info->argc; k++)
+		ge_unsetenv(info, info->argv[k]);
 
 	return (0);
 }
 
 /**
- * populate_env_list - populates env linked list
+ * print_envlist - populates env linked list
  * @info: Structure containing potential arguments. Used to maintain
  * constant function prototype.
  * Return: Always 0
  */
-int populate_env_list(info_t *info)
+int print_envlist(info_t *info)
 {
 	list_t *node = NULL;
 	size_t i;
